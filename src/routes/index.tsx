@@ -64,7 +64,7 @@ function Index() {
               <PulseMark />
             </span>
             <span className="min-w-0">
-              <span className="block truncate font-display text-sm font-600 font-semibold tracking-tight">
+              <span className="block truncate font-display text-sm font-semibold tracking-tight">
                 Pulse &amp; Purpose CPR
               </span>
               <span className="block truncate text-[11px] text-muted-foreground">
