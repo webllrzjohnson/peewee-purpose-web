@@ -97,7 +97,7 @@ function Index() {
         <section className="border-b border-border bg-navy text-navy-foreground">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-24">
             <div>
-              <p className="eyebrow text-pulse">Clinical education, delivered with purpose</p>
+              <p className="eyebrow text-pulse-light">Clinical education, delivered with purpose</p>
               <h1 className="mt-5 font-display text-4xl leading-[1.08] font-semibold sm:text-5xl lg:text-[3.4rem]">
                 Life-saving skills taught with clarity, rigor and confidence.
               </h1>
@@ -277,10 +277,10 @@ function Index() {
 
 function PulseMark() {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="h-5 w-5 text-pulse-light" fill="none" aria-hidden="true">
       <path
         d="M2 12h4l2.5-6 3.5 12 3-9 2 3h5"
-        stroke="oklch(0.56 0.18 22)"
+        stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

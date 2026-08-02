@@ -25,6 +25,7 @@
   --color-navy-foreground: var(--navy-foreground);
   --color-surface: var(--surface);
   --color-pulse: var(--pulse);
+  --color-pulse-light: var(--pulse-light);
   --color-pulse-foreground: var(--pulse-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
