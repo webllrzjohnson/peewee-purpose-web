@@ -84,8 +84,8 @@ function Index() {
             </a>
           </nav>
           <a
-            href="#contact"
-            className="inline-flex shrink-0 items-center rounded-md bg-pulse px-4 py-2 text-sm font-semibold text-pulse-foreground transition-opacity hover:opacity-90"
+            href="#register"
+            className="inline-flex shrink-0 items-center rounded-md bg-highlight px-4 py-2 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
           >
             Register
           </a>
