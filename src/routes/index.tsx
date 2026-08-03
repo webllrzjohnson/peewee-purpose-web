@@ -102,9 +102,9 @@ function Index() {
                 Life-saving skills taught with clarity, rigor and confidence.
               </h1>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-navy-foreground/75">
-                Pulse and Purpose CPR LLC trains healthcare professionals, workplaces and
-                community members in CPR, BLS, ACLS, PALS and First Aid — hands-on instruction
-                that turns knowledge into calm, decisive action.
+                Pulse and Purpose CPR LLC trains healthcare professionals, workplaces and community
+                members in CPR, BLS, ACLS, PALS and First Aid — hands-on instruction that turns
+                knowledge into calm, decisive action.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
@@ -191,8 +191,8 @@ function Index() {
               <p className="mt-6 leading-relaxed text-muted-foreground">
                 We believe learning to save a life should be clear, practical and empowering. Our
                 training is hands-on and easy to understand, designed to help individuals and
-                community members feel calm and confident in an emergency — while helping
-                healthcare professionals stay current and refresh their skills with certainty.
+                community members feel calm and confident in an emergency — while helping healthcare
+                professionals stay current and refresh their skills with certainty.
               </p>
               <p className="mt-4 leading-relaxed text-muted-foreground">
                 We don't just teach the rhythm. We build the confidence behind it, so more people
@@ -223,8 +223,8 @@ function Index() {
                 Secure your seat in the next certification class
               </h2>
               <p className="mt-4 text-navy-foreground/75">
-                Individual seats, group sessions and on-site training. Tell us the course and
-                dates that work for you and we'll confirm your registration.
+                Individual seats, group sessions and on-site training. Tell us the course and dates
+                that work for you and we'll confirm your registration.
               </p>
             </div>
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
@@ -246,7 +246,6 @@ function Index() {
 
         {/* Contact */}
         <section id="contact" className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-
           <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-xl">
               <p className="eyebrow">Get in touch</p>
