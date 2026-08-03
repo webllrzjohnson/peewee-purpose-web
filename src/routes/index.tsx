@@ -108,16 +108,16 @@ function Index() {
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
-                  href="#courses"
-                  className="inline-flex items-center rounded-md bg-pulse px-6 py-3 text-sm font-semibold text-pulse-foreground transition-opacity hover:opacity-90"
+                  href="#register"
+                  className="inline-flex items-center rounded-md bg-highlight px-6 py-3 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
                 >
-                  View course catalog
+                  Register for a class
                 </a>
                 <a
-                  href="#contact"
+                  href="#courses"
                   className="inline-flex items-center rounded-md border border-navy-foreground/25 px-6 py-3 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
                 >
-                  Schedule a group class
+                  View course catalog
                 </a>
               </div>
             </div>
