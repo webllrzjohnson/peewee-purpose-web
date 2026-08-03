@@ -79,8 +79,8 @@ function Index() {
             <a className="transition-colors hover:text-foreground" href="#about">
               About
             </a>
-            <a className="transition-colors hover:text-foreground" href="#contact">
-              Contact
+            <a className="transition-colors hover:text-foreground" href="#register">
+              Register
             </a>
           </nav>
           <a
