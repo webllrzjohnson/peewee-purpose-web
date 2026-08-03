@@ -214,8 +214,39 @@ function Index() {
           </div>
         </section>
 
+        {/* Register CTA */}
+        <section id="register" className="bg-navy text-navy-foreground">
+          <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-16 lg:flex-row lg:items-center lg:justify-between lg:py-20">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-highlight-bright">Register today</p>
+              <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
+                Secure your seat in the next certification class
+              </h2>
+              <p className="mt-4 text-navy-foreground/75">
+                Individual seats, group sessions and on-site training. Tell us the course and
+                dates that work for you and we'll confirm your registration.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
+              <a
+                href="mailto:cprpulseandpurpose@gmail.com?subject=CPR%20Class%20Registration"
+                className="inline-flex items-center justify-center rounded-md bg-highlight px-7 py-3.5 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
+              >
+                Register by email
+              </a>
+              <a
+                href="tel:+15108289140"
+                className="inline-flex items-center justify-center rounded-md border border-navy-foreground/30 px-7 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
+              >
+                Call (510) 828-9140
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* Contact */}
         <section id="contact" className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
+
           <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-xl">
               <p className="eyebrow">Get in touch</p>
