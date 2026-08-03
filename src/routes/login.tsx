@@ -39,7 +39,7 @@ function LoginComponent() {
     resolver: zodResolver(authSchema),
   });
 
-  async function onSubmit(data: any) {
+  async function onSubmit(data: z.infer<typeof authSchema>) {
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/login", {
@@ -60,7 +60,11 @@ function LoginComponent() {
         });
       }
     } catch (e) {
-      toast({ variant: "destructive", title: "Error", description: "A network error occurred" });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "A network error occurred",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -71,22 +75,32 @@ function LoginComponent() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your email and password to access your account</CardDescription>
+          <CardDescription>
+            Enter your email and password to access your account
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" {...register("email")} placeholder="name@example.com" />
+              <Input
+                id="email"
+                {...register("email")}
+                placeholder="name@example.com"
+              />
               {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message as string}</p>
+                <p className="text-sm text-red-500">
+                  {errors.email.message as string}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password"> password</Label>
               <Input id="password" type="password" {...register("password")} />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message as string}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message as string}
+                </p>
               )}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>

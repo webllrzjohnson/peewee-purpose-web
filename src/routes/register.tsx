@@ -40,7 +40,7 @@ function RegisterComponent() {
     resolver: zodResolver(registerSchema),
   });
 
-  async function onSubmit(data: any) {
+  async function onSubmit(data: z.infer<typeof registerSchema>) {
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
@@ -50,7 +50,10 @@ function RegisterComponent() {
       });
 
       if (res.ok) {
-        toast({ title: "Success", description: "Account created! Please log in." });
+        toast({
+          title: "Success",
+          description: "Account created! Please log in.",
+        });
         navigate({ to: "/login" });
       } else {
         const err = await res.json();
@@ -61,7 +64,11 @@ function RegisterComponent() {
         });
       }
     } catch (e) {
-      toast({ variant: "destructive", title: "Error", description: "A network error occurred" });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "A network error occurred",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -72,29 +79,49 @@ function RegisterComponent() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl">Create an Account</CardTitle>
-          <CardDescription>Join us to start your CPR certification journey</CardDescription>
+          <CardDescription>
+            Join us to start your CPR certification journey
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" {...register("name")} placeholder="John Doe" />
+              <Input
+                id="name"
+                {...register("name")}
+                placeholder="John Doe"
+              />
               {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message as string}</p>
+                <p className="text-sm text-red-500">
+                  {errors.name.message as string}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" {...register("email")} placeholder="name@example.com" />
+              <Input
+                id="email"
+                {...register("email")}
+                placeholder="name@example.com"
+              />
               {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message as string}</p>
+                <p className="text-sm text-red-500">
+                  {errors.email.message as string}
+                </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" {...register("password")} />
+              <Input
+                id="password"
+                type="password"
+                {...register("password")}
+              />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message as string}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message as string}
+                </p>
               )}
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
