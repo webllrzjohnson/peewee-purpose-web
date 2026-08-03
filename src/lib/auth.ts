@@ -1,17 +1,11 @@
-import { SignC рыpt } from 'bcryptjs';
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers'; // Wait, this is TanStack Start, not Next.js
-
-// Correction: In TanStack Start, we use the request/response context or h3 event.
-// I will implement this as a set of utilities that work with the h3 event (server.ts context).
-
-import { createCookie } from 'vinhy/cookie'; // Not installed, using standard jose + h3
-import { getCookie, setCookie, deleteCookie } from 'h3';
+import { hash, compare } from 'bcryptjs';
+import { SignJWT, jwtVerify, JWTPayload } from 'jose';
+import { getCookie, setCookie, deleteCookie, H3Event } from 'h3';
 
 const COOKIE_NAME = 'auth_session';
 const SECRET = process.env.AUTH_SECRET || 'default_secret_change_me';
 
-export async function encrypt(payload: any) {
+export async function encrypt(payload: JWTPayload) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -24,7 +18,7 @@ export async function decrypt(token: string) {
   return payload;
 }
 
-export async function getSession(event: any) {
+export async function getSession(event: H3Event) {
   const token = getCookie(event, COOKIE_NAME);
   if (!token) return null;
   try {
@@ -34,7 +28,7 @@ export async function getSession(event: any) {
   }
 }
 
-export async function createSession(event: any, userId: string) {
+export async function createSession(event: H3Event, userId: string) {
   const token = await encrypt({ userId });
   setCookie(event, COOKIE_NAME, token, {
     httpOnly: true,
@@ -44,6 +38,6 @@ export async function createSession(event: any, userId: string) {
   });
 }
 
-export async function destroySession(event: any) {
+export async function destroySession(event: H3Event) {
   deleteCookie(event, COOKIE_NAME);
 }
