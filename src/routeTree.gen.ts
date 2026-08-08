@@ -13,6 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ApiAppointmentsBookRouteImport } from './routes/api/appointments/book'
+import { Route as ApiAppointmentsSlotsRouteImport } from './routes/api/appointments/slots'
+import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +38,46 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAppointmentsBookRoute = ApiAppointmentsBookRouteImport.update({
+  id: '/api/appointments/book',
+  path: '/api/appointments/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAppointmentsSlotsRoute = ApiAppointmentsSlotsRouteImport.update({
+  id: '/api/appointments/slots',
+  path: '/api/appointments/slots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
+  id: '/api/auth/register',
+  path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/api/appointments/book': typeof ApiAppointmentsBookRoute
+  '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/api/appointments/book': typeof ApiAppointmentsBookRoute
+  '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +85,42 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/api/appointments/book': typeof ApiAppointmentsBookRoute
+  '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/register': typeof ApiAuthRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/book' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/book'
+    | '/login'
+    | '/register'
+    | '/api/appointments/book'
+    | '/api/appointments/slots'
+    | '/api/auth/login'
+    | '/api/auth/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/book' | '/login' | '/register'
-  id: '__root__' | '/' | '/book' | '/login' | '/register'
+  to:
+    | '/'
+    | '/book'
+    | '/login'
+    | '/register'
+    | '/api/appointments/book'
+    | '/api/appointments/slots'
+    | '/api/auth/login'
+    | '/api/auth/register'
+  id:
+    | '__root__'
+    | '/'
+    | '/book'
+    | '/login'
+    | '/register'
+    | '/api/appointments/book'
+    | '/api/appointments/slots'
+    | '/api/auth/login'
+    | '/api/auth/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +128,10 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ApiAppointmentsBookRoute: typeof ApiAppointmentsBookRoute
+  ApiAppointmentsSlotsRoute: typeof ApiAppointmentsSlotsRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +164,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/appointments/book': {
+      id: '/api/appointments/book'
+      path: '/api/appointments/book'
+      fullPath: '/api/appointments/book'
+      preLoaderRoute: typeof ApiAppointmentsBookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/appointments/slots': {
+      id: '/api/appointments/slots'
+      path: '/api/appointments/slots'
+      fullPath: '/api/appointments/slots'
+      preLoaderRoute: typeof ApiAppointmentsSlotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/register': {
+      id: '/api/auth/register'
+      path: '/api/auth/register'
+      fullPath: '/api/auth/register'
+      preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +200,10 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ApiAppointmentsBookRoute: ApiAppointmentsBookRoute,
+  ApiAppointmentsSlotsRoute: ApiAppointmentsSlotsRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

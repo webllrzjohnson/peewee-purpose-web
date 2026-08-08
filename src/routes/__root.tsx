@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -28,7 +29,7 @@ function NotFoundComponent() {
             Go home
           </Link>
         </div>
-      </div}
+      </div>
     </div>
   );
 }
@@ -65,8 +66,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Go home
           </a>
-        </div}
-      </div}
+        </div>
+      </div>
     </div>
   );
 }
@@ -113,6 +114,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster richColors />
         <Scripts />
       </body>
     </html>

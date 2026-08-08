@@ -1,35 +1,65 @@
-import { createAPIRoute } from "@tanstack/react-start/api";
-import { db } from "@/lib/prisma";
-import { hash, compare } from "bcryptjs";
-import { createSession, destroySession } from "@/lib/auth";
-import { eventHandler, readBody, setCookie } from "h3";
+import { createFileRoute } from "@tanstack/react-router";
+import { compare } from "bcryptjs";
 
-export const API = createAPIRoute({
-  async handler(event) {
-    const { method } = event;
+import { createSessionCookie } from "@/lib/auth";
+import { jsonResponse, readJsonBody } from "@/lib/http";
+import { getDb } from "@/lib/prisma";
 
-    if (method === "POST") {
-      const body = await readBody(event);
-      const { email, password } = body;
+type LoginRequest = {
+  email: string;
+  password: string;
+};
 
-      if (!email || !password) {
-        return { status: 400, body: { message: "Email and password are required" } };
-      }
+function parseLoginRequest(input: unknown): LoginRequest | null {
+  if (input == null || typeof input !== "object") {
+    return null;
+  }
 
-      const user = await db.user.findUnique({ where: { email } });
-      if (!user) {
-        return { status: 401, body: { message: "Invalid email or password" } };
-      }
+  const data = input as Record<string, unknown>;
+  const email = typeof data["email"] === "string" ? data["email"].trim().toLowerCase() : "";
+  const password = typeof data["password"] === "string" ? data["password"] : "";
 
-      const isPasswordValid = await compare(password, user.password);
-      if (!isPasswordValid) {
-        return { status: 401, body: { message: "Invalid email or password" } };
-      }
+  if (!email || !password) {
+    return null;
+  }
 
-      await createSession(event, user.id);
-      return { status: 200, body: { message: "Logged in successfully" } };
-    }
+  return { email, password };
+}
 
-    return { status: 405, body: { message: "Method Not Allowed" } };
+export const Route = createFileRoute("/api/auth/login")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const credentials = parseLoginRequest(await readJsonBody(request));
+
+        if (!credentials) {
+          return jsonResponse({ message: "Email and password are required" }, { status: 400 });
+        }
+
+        try {
+          const db = getDb();
+          const user = await db.user.findUnique({ where: { email: credentials.email } });
+          if (!user) {
+            return jsonResponse({ message: "Invalid email or password" }, { status: 401 });
+          }
+
+          const isPasswordValid = await compare(credentials.password, user.password);
+          if (!isPasswordValid) {
+            return jsonResponse({ message: "Invalid email or password" }, { status: 401 });
+          }
+
+          return jsonResponse(
+            { message: "Logged in successfully" },
+            {
+              status: 200,
+              headers: { "Set-Cookie": await createSessionCookie(user.id) },
+            },
+          );
+        } catch (error) {
+          console.error("Login failed", error);
+          return jsonResponse({ message: "Login failed" }, { status: 500 });
+        }
+      },
+    },
   },
 });

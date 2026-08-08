@@ -1,63 +1,48 @@
-import { createAPIRoute } from '@tanstack/react-start/api';
-import { db } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-import { eventHandler, readBody } from 'h3';
-import { parseISO, addMinutes, formatISO } from 'date-fns';
+import { createFileRoute } from "@tanstack/react-router";
 
-export const API = createAPIRoute({
-  async handler(event) {
-    const { method } = event;
+import { getDayRange, getRemainingSlotTimes } from "@/lib/appointments";
+import { jsonResponse } from "@/lib/http";
+import { getDb } from "@/lib/prisma";
 
-    if (method === 'GET') {
-      const query = event.node.req.url?.split('?')[1];
-      const params = new URLSearchParams(query);
-      const dateStr = params.get('date');
+export const Route = createFileRoute("/api/appointments/slots")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => {
+        const date = new URL(request.url).searchParams.get("date")?.trim() ?? "";
+        const dayRange = getDayRange(date);
 
-      if (!dateStr) {
-        return { status: 400, body: { message: 'Date is required' } };
-      }
+        if (!dayRange) {
+          return jsonResponse({ message: "A valid date is required" }, { status: 400 });
+        }
 
-      // Simplified slot generation for now: 9 AM to 5 PM, every 2 hours
-      const slots = ['09:00', '11:00', '13:00', '15:00', '17:00'];
-      
-      // In a real scenario, we would check the db for existing appointments on this date
-      // and filter out taken slots.
-      
-      return { status: 200, body: slots };
-    }
+        try {
+          const db = getDb();
+          const existingAppointments = await db.appointment.findMany({
+            where: {
+              startTime: {
+                gte: dayRange.start,
+                lt: dayRange.end,
+              },
+              status: {
+                not: "CANCELLED",
+              },
+            },
+            select: {
+              startTime: true,
+            },
+          });
 
-    if (method === 'POST') {
-      const session = await getSession(event);
-      if (!session) {
-        return { status: 401, body: { message: 'Authentication required' } };
-      }
-
-      const body = await readBody(event);
-      const { date, time } = body;
-
-      if (!date || !time) {
-        return { status: 400, body: { message: 'Date and time are required' } };
-      }
-
-      try {
-        const startTime = parseISO(`${date}T${time}:00`);
-        const endTime = addMinutes(startTime, 120); // 2-hour session
-
-        await db.appointment.create({
-          data: {
-            userId: session.userId as string,
-            startTime,
-            endTime,
-            status: 'PENDING',
-          },
-        });
-
-        return { status: 201, body: { message: 'Appointment booked successfully' } };
-      } catch (e) {
-        return { status: 500, body: { message: 'Booking failed' } };
-      }
-    }
-
-    return { status: 405, body: { message: 'Method Not Allowed' } };
+          return jsonResponse(
+            getRemainingSlotTimes(
+              date,
+              existingAppointments.map((appointment) => appointment.startTime),
+            ),
+          );
+        } catch (error) {
+          console.error("Appointment slots lookup failed", error);
+          return jsonResponse({ message: "Unable to load appointment slots" }, { status: 500 });
+        }
+      },
+    },
   },
 });

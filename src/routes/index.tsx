@@ -84,7 +84,7 @@ function Index() {
             </a>
           </nav>
           <a
-            href="#register"
+            href="/register"
             className="inline-flex shrink-0 items-center rounded-md bg-highlight px-4 py-2 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
           >
             Register
@@ -108,7 +108,7 @@ function Index() {
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
-                  href="#register"
+                  href="/register"
                   className="inline-flex items-center rounded-md bg-highlight px-6 py-3 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
                 >
                   Register for a class
@@ -229,10 +229,16 @@ function Index() {
             </div>
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
               <a
-                href="mailto:cprpulseandpurpose@gmail.com?subject=CPR%20Class%20Registration"
+                href="/register"
                 className="inline-flex items-center justify-center rounded-md bg-highlight px-7 py-3.5 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
               >
-                Register by email
+                Create account
+              </a>
+              <a
+                href="/book"
+                className="inline-flex items-center justify-center rounded-md border border-navy-foreground/30 px-7 py-3.5 text-sm font-semibold text-navy-foreground transition-colors hover:bg-navy-foreground/10"
+              >
+                Book a session
               </a>
               <a
                 href="tel:+15108289140"

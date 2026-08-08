@@ -1,45 +1,74 @@
-import { createAPIRoute } from '@tanstack/react-start/api';
-import { db } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
-import { readBody } from 'h3';
-import { parseISO, addMinutes } from 'date-fns';
+import { createFileRoute } from "@tanstack/react-router";
+import { Prisma } from "@prisma/client";
 
-export const API = createAPIRoute({
-  async handler(event) {
-    const { method } = event;
+import {
+  getAppointmentEndTime,
+  getAppointmentStartTime,
+  isPastAppointment,
+  parseAppointmentRequest,
+} from "@/lib/appointments";
+import { getSession } from "@/lib/auth";
+import { jsonResponse, readJsonBody } from "@/lib/http";
+import { getDb } from "@/lib/prisma";
 
-    if (method === 'POST') {
-      const session = await getSession(event);
-      if (!session) {
-        return { status: 401, body: { message: 'Authentication required' } };
-      }
+export const Route = createFileRoute("/api/appointments/book")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const session = await getSession(request);
+        const userId = typeof session?.["userId"] === "string" ? session["userId"] : null;
 
-      const body = await readBody(event);
-      const { date, time } = body;
+        if (!userId) {
+          return jsonResponse({ message: "Authentication required" }, { status: 401 });
+        }
 
-      if (!date || !time) {
-        return { status: 400, body: { message: 'Date and time are required' } };
-      }
+        const appointmentRequest = parseAppointmentRequest(await readJsonBody(request));
+        if (!appointmentRequest) {
+          return jsonResponse(
+            { message: "A valid date and time slot are required" },
+            { status: 400 },
+          );
+        }
 
-      try {
-        const startTime = parseISO(`${date}T${time}:00`);
-        const endTime = addMinutes(startTime, 120);
+        const startTime = getAppointmentStartTime(appointmentRequest);
+        if (!startTime) {
+          return jsonResponse(
+            { message: "A valid date and time slot are required" },
+            { status: 400 },
+          );
+        }
 
-        await db.appointment.create({
-          data: {
-            userId: session.userId as string,
-            startTime,
-            endTime,
-            status: 'PENDING',
-          },
-        });
+        if (isPastAppointment(startTime)) {
+          return jsonResponse(
+            { message: "Please choose a future appointment slot" },
+            { status: 400 },
+          );
+        }
 
-        return { status: 201, body: { message: 'Appointment booked successfully' } };
-      } catch (e) {
-        return { status: 500, body: { message: 'Booking failed' } };
-      }
-    }
+        try {
+          const db = getDb();
+          await db.appointment.create({
+            data: {
+              userId,
+              startTime,
+              endTime: getAppointmentEndTime(startTime),
+              status: "PENDING",
+            },
+          });
 
-    return { status: 405, body: { message: 'Method Not Allowed' } };
+          return jsonResponse({ message: "Appointment booked successfully" }, { status: 201 });
+        } catch (error) {
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+            return jsonResponse(
+              { message: "That appointment slot is no longer available" },
+              { status: 409 },
+            );
+          }
+
+          console.error("Appointment booking failed", error);
+          return jsonResponse({ message: "Booking failed" }, { status: 500 });
+        }
+      },
+    },
   },
 });
