@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "recipe": {
+    "name": "TanStack Start local verification",
+    "kind": "tanstack-start",
+    "bootstrap": [],
+    "build": ["npm run build"],
+    "test": ["npx tsc --noEmit --pretty false", "npm run lint", "npx prettier --check ."],
+    "start": null,
+    "port": 3000,
+    "readinessPath": "/",
+    "evidence": [
+      "Project uses npm/package-lock for direct verified checks in this workspace.",
+      "Start phase is intentionally omitted because Hermes verifier hangs while managing Bun/Vite dev-server teardown on Windows; local runtime is verified separately on http://127.0.0.1:3000/."
+    ]
+  },
+  "updatedAt": "2026-08-09T00:00:00Z"
+}

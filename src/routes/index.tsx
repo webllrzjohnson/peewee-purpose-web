@@ -24,26 +24,85 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const courses = [
+const coursePathways = [
   {
-    title: "Blended Learning HeartCode® BLS, ACLS & PALS",
-    body: "Complete the online portion at your own pace, then finish with a hands-on skills session led by an Association Instructor, voice-assisted manikin or Simulation Station.",
-    tag: "Online + Skills Check",
+    title: "Healthcare Provider BLS",
+    audience: "Nurses, dental teams, EMT students, clinical staff and healthcare professionals.",
+    details: [
+      "Online HeartCode + hands-on skills",
+      "AHA BLS completion card",
+      "Best for new or renewing providers",
+    ],
+    price: "From $100",
+    cta: "Book BLS",
   },
   {
-    title: "Instructor-Led BLS, ACLS & PALS",
-    body: "Full-length, instructor-led classroom training that builds strong skills proficiency and confident, current providers.",
-    tag: "In Person",
+    title: "ACLS & PALS Certification",
+    audience: "Advanced healthcare professionals who respond to cardiac or pediatric emergencies.",
+    details: [
+      "Instructor-led or blended options",
+      "Initial and renewal pathways",
+      "Scenario-based practice",
+    ],
+    price: "From $199",
+    cta: "Ask about ACLS/PALS",
   },
   {
     title: "Heartsaver® CPR AED",
-    body: "Recognize cardiac arrest, act fast, and deliver effective CPR and AED support until emergency responders arrive.",
-    tag: "Community & Workplace",
+    audience:
+      "Workplaces, community members, coaches, parents and anyone who wants CPR confidence.",
+    details: [
+      "No medical background required",
+      "CPR and AED response",
+      "Two-year course completion card",
+    ],
+    price: "Contact for dates",
+    cta: "Request Heartsaver CPR",
   },
   {
-    title: "Heartsaver® First Aid CPR AED",
-    body: "OSHA-compliant first aid and CPR training for anyone with little or no medical background. Earns a two-year course completion card.",
-    tag: "OSHA Compliant",
+    title: "Pediatric First Aid CPR AED",
+    audience: "Childcare providers, teachers, camp counselors and youth program staff.",
+    details: [
+      "Child and infant emergency response",
+      "First aid, CPR and AED",
+      "Great for schools and childcare teams",
+    ],
+    price: "From $90",
+    cta: "Book pediatric CPR",
+  },
+];
+
+const courseFinder = [
+  {
+    need: "I work in healthcare",
+    match: "Start with BLS; ask about ACLS or PALS if your role requires advanced certification.",
+  },
+  {
+    need: "I already finished online HeartCode",
+    match: "Choose the skills session only so you are not paying for the online portion twice.",
+  },
+  {
+    need: "I work with children",
+    match: "Choose Pediatric First Aid CPR AED for child and infant emergency response.",
+  },
+  {
+    need: "I need workplace or community CPR",
+    match: "Choose Heartsaver CPR AED or Heartsaver First Aid CPR AED.",
+  },
+];
+
+const blsOptions = [
+  {
+    name: "BLS HeartCode complete package",
+    bestFor: "New or renewing providers who need the online course and hands-on checkoff.",
+    includes: "Online HeartCode + instructor-led skills session",
+    price: "$100",
+  },
+  {
+    name: "BLS skills session only",
+    bestFor: "Students who already purchased and completed AHA HeartCode BLS online.",
+    includes: "Hands-on skills practice and checkoff only",
+    price: "$80",
   },
 ];
 
@@ -147,26 +206,96 @@ function Index() {
 
         {/* Courses */}
         <section id="courses" className="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Courses</p>
-            <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">
-              Certification pathways for every level of responder
-            </h2>
-            <p className="mt-4 text-muted-foreground">
-              Every course follows current Association science and ends with a hands-on skills
-              evaluation, so you leave certified and genuinely prepared.
-            </p>
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Courses</p>
+              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">
+                Find the right CPR course before you book
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Choose by role, format and prerequisite instead of guessing from certification
+                acronyms. Every pathway is built to end with confident hands-on performance.
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-surface p-6">
+              <h3 className="font-display text-lg font-semibold">Which class do I need?</h3>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                {courseFinder.map((item) => (
+                  <div key={item.need} className="border-l-2 border-pulse pl-4">
+                    <p className="text-sm font-semibold">{item.need}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {item.match}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
-            {courses.map((course) => (
-              <article key={course.title} className="bg-card p-8">
-                <span className="eyebrow text-muted-foreground">{course.tag}</span>
-                <h3 className="mt-4 font-display text-lg font-semibold leading-snug">
-                  {course.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{course.body}</p>
+
+          <div className="mt-12 grid gap-5 sm:grid-cols-2">
+            {coursePathways.map((course) => (
+              <article key={course.title} className="rounded-lg border border-border bg-card p-7">
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="font-display text-xl font-semibold leading-snug">
+                    {course.title}
+                  </h3>
+                  <span className="shrink-0 rounded-full bg-highlight/15 px-3 py-1 text-xs font-semibold text-highlight">
+                    {course.price}
+                  </span>
+                </div>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {course.audience}
+                </p>
+                <ul className="mt-5 space-y-2 text-sm">
+                  {course.details.map((detail) => (
+                    <li key={detail} className="flex gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-pulse" />
+                      <span className="text-muted-foreground">{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="/book"
+                  className="mt-6 inline-flex text-sm font-semibold text-pulse transition-colors hover:text-highlight"
+                >
+                  {course.cta} →
+                </a>
               </article>
             ))}
+          </div>
+
+          <div className="mt-12 rounded-lg border border-border bg-navy p-6 text-navy-foreground sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+              <div>
+                <p className="eyebrow text-highlight-bright">Avoid double booking</p>
+                <h3 className="mt-3 font-display text-2xl font-semibold">
+                  BLS HeartCode vs. skills session only
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-navy-foreground/75">
+                  If you already completed the AHA online HeartCode course, choose the skills
+                  session only. If you need the full path, choose the complete BLS HeartCode
+                  package.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {blsOptions.map((option) => (
+                  <article
+                    key={option.name}
+                    className="rounded-md border border-navy-foreground/15 bg-navy-foreground/5 p-5"
+                  >
+                    <h4 className="font-semibold">{option.name}</h4>
+                    <p className="mt-3 text-sm text-navy-foreground/70">{option.bestFor}</p>
+                    <p className="mt-4 text-xs uppercase tracking-widest text-navy-foreground/50">
+                      Includes
+                    </p>
+                    <p className="mt-1 text-sm">{option.includes}</p>
+                    <p className="mt-5 font-display text-xl font-semibold text-highlight-bright">
+                      {option.price}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -288,7 +417,7 @@ function Index() {
       </main>
 
       <footer className="border-t border-border bg-navy text-navy-foreground">
-        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-6 py-8 sm:flex sm:justify-between">
+        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-navy-foreground/10">
               <PulseMark />
@@ -302,9 +431,23 @@ function Index() {
               </p>
             </div>
           </div>
-          <p className="text-xs text-navy-foreground/60">
-            © {new Date().getFullYear()} Pulse and Purpose CPR LLC
-          </p>
+          <div className="flex flex-col gap-3 text-xs text-navy-foreground/60 lg:items-end">
+            <nav className="flex flex-wrap gap-x-4 gap-y-2">
+              <a href="/privacy" className="transition-colors hover:text-navy-foreground">
+                Privacy
+              </a>
+              <a href="/terms" className="transition-colors hover:text-navy-foreground">
+                Terms
+              </a>
+              <a href="/disclaimer" className="transition-colors hover:text-navy-foreground">
+                Disclaimer
+              </a>
+              <a href="/accessibility" className="transition-colors hover:text-navy-foreground">
+                Accessibility
+              </a>
+            </nav>
+            <p>© {new Date().getFullYear()} Pulse and Purpose CPR LLC</p>
+          </div>
         </div>
       </footer>
     </div>
