@@ -16,6 +16,9 @@ dist-ssr
 .nitro
 *.local
 
+# Local Hermes planning artifacts
+.hermes/plans/
+
 # Local credentials / secrets
 .env
 .env.*
