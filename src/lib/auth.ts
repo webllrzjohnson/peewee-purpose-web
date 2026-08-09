@@ -1,5 +1,7 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
+import { getDb } from "./prisma";
+
 const COOKIE_NAME = "auth_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 
@@ -57,6 +59,35 @@ export async function getSession(request: Request) {
   } catch {
     return null;
   }
+}
+
+export async function getCurrentUser(request: Request) {
+  const session = await getSession(request);
+  const userId = typeof session?.["userId"] === "string" ? session["userId"] : null;
+
+  if (!userId) {
+    return null;
+  }
+
+  const db = getDb();
+  return await db.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, name: true, role: true },
+  });
+}
+
+export async function requireAdmin(request: Request) {
+  const user = await getCurrentUser(request);
+
+  if (!user) {
+    return { user: null, status: 401 as const, message: "Authentication required" };
+  }
+
+  if (user.role !== "ADMIN") {
+    return { user: null, status: 403 as const, message: "Admin access required" };
+  }
+
+  return { user, status: 200 as const, message: "OK" };
 }
 
 export async function createSessionCookie(userId: string) {

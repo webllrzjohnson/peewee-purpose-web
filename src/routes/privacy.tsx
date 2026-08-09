@@ -65,10 +65,11 @@ function PrivacyPage() {
           title: "Cookies and analytics",
           body: (
             <p>
-              The site may use essential cookies or similar technologies for account, security and
-              booking functionality. If analytics, advertising or third-party tracking tools are
-              added later, this policy and any required consent controls should be updated before
-              launch.
+              The site uses essential cookies or similar technologies for account access, security,
+              booking, payment flow and to remember your cookie notice choice. We are not currently
+              using advertising or analytics cookies. If analytics, advertising or third-party
+              tracking tools are added later, this policy and any required consent controls should
+              be updated before launch.
             </p>
           ),
         },

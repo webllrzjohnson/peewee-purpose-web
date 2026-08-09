@@ -11,16 +11,29 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as ApiCoursesRouteImport } from './routes/api/courses'
+import { Route as ApiPaymentSettingsRouteImport } from './routes/api/payment-settings'
+import { Route as ApiTrainingSessionsRouteImport } from './routes/api/training-sessions'
+import { Route as ApiAdminBookingsRouteImport } from './routes/api/admin/bookings'
+import { Route as ApiAdminCoursesRouteImport } from './routes/api/admin/courses'
+import { Route as ApiAdminPaymentSettingsRouteImport } from './routes/api/admin/payment-settings'
+import { Route as ApiAdminSessionsRouteImport } from './routes/api/admin/sessions'
 import { Route as ApiAppointmentsBookRouteImport } from './routes/api/appointments/book'
 import { Route as ApiAppointmentsSlotsRouteImport } from './routes/api/appointments/slots'
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
+import { Route as ApiPaypalCaptureOrderRouteImport } from './routes/api/paypal/capture-order'
+import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
+import { Route as ApiPaypalWebhookRouteImport } from './routes/api/paypal/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +43,11 @@ const IndexRoute = IndexRouteImport.update({
 const AccessibilityRoute = AccessibilityRouteImport.update({
   id: '/accessibility',
   path: '/accessibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookRoute = BookRouteImport.update({
@@ -62,6 +80,41 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCoursesRoute = ApiCoursesRouteImport.update({
+  id: '/api/courses',
+  path: '/api/courses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaymentSettingsRoute = ApiPaymentSettingsRouteImport.update({
+  id: '/api/payment-settings',
+  path: '/api/payment-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTrainingSessionsRoute = ApiTrainingSessionsRouteImport.update({
+  id: '/api/training-sessions',
+  path: '/api/training-sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminBookingsRoute = ApiAdminBookingsRouteImport.update({
+  id: '/api/admin/bookings',
+  path: '/api/admin/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminCoursesRoute = ApiAdminCoursesRouteImport.update({
+  id: '/api/admin/courses',
+  path: '/api/admin/courses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPaymentSettingsRoute = ApiAdminPaymentSettingsRouteImport.update({
+  id: '/api/admin/payment-settings',
+  path: '/api/admin/payment-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminSessionsRoute = ApiAdminSessionsRouteImport.update({
+  id: '/api/admin/sessions',
+  path: '/api/admin/sessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAppointmentsBookRoute = ApiAppointmentsBookRouteImport.update({
   id: '/api/appointments/book',
   path: '/api/appointments/book',
@@ -77,113 +130,229 @@ const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
   path: '/api/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
+  id: '/api/auth/me',
+  path: '/api/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
   id: '/api/auth/register',
   path: '/api/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalCaptureOrderRoute = ApiPaypalCaptureOrderRouteImport.update({
+  id: '/api/paypal/capture-order',
+  path: '/api/paypal/capture-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalCreateOrderRoute = ApiPaypalCreateOrderRouteImport.update({
+  id: '/api/paypal/create-order',
+  path: '/api/paypal/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalWebhookRoute = ApiPaypalWebhookRouteImport.update({
+  id: '/api/paypal/webhook',
+  path: '/api/paypal/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/terms': typeof TermsRoute
+  '/api/courses': typeof ApiCoursesRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/training-sessions': typeof ApiTrainingSessionsRoute
+  '/api/admin/bookings': typeof ApiAdminBookingsRoute
+  '/api/admin/courses': typeof ApiAdminCoursesRoute
+  '/api/admin/payment-settings': typeof ApiAdminPaymentSettingsRoute
+  '/api/admin/sessions': typeof ApiAdminSessionsRoute
   '/api/appointments/book': typeof ApiAppointmentsBookRoute
   '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/terms': typeof TermsRoute
+  '/api/courses': typeof ApiCoursesRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/training-sessions': typeof ApiTrainingSessionsRoute
+  '/api/admin/bookings': typeof ApiAdminBookingsRoute
+  '/api/admin/courses': typeof ApiAdminCoursesRoute
+  '/api/admin/payment-settings': typeof ApiAdminPaymentSettingsRoute
+  '/api/admin/sessions': typeof ApiAdminSessionsRoute
   '/api/appointments/book': typeof ApiAppointmentsBookRoute
   '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/accessibility': typeof AccessibilityRoute
+  '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/disclaimer': typeof DisclaimerRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
   '/terms': typeof TermsRoute
+  '/api/courses': typeof ApiCoursesRoute
+  '/api/payment-settings': typeof ApiPaymentSettingsRoute
+  '/api/training-sessions': typeof ApiTrainingSessionsRoute
+  '/api/admin/bookings': typeof ApiAdminBookingsRoute
+  '/api/admin/courses': typeof ApiAdminCoursesRoute
+  '/api/admin/payment-settings': typeof ApiAdminPaymentSettingsRoute
+  '/api/admin/sessions': typeof ApiAdminSessionsRoute
   '/api/appointments/book': typeof ApiAppointmentsBookRoute
   '/api/appointments/slots': typeof ApiAppointmentsSlotsRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/register': typeof ApiAuthRegisterRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
+  '/api/paypal/webhook': typeof ApiPaypalWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/accessibility'
+    | '/admin'
     | '/book'
     | '/disclaimer'
     | '/login'
     | '/privacy'
     | '/register'
     | '/terms'
+    | '/api/courses'
+    | '/api/payment-settings'
+    | '/api/training-sessions'
+    | '/api/admin/bookings'
+    | '/api/admin/courses'
+    | '/api/admin/payment-settings'
+    | '/api/admin/sessions'
     | '/api/appointments/book'
     | '/api/appointments/slots'
     | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
     | '/api/auth/register'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/create-order'
+    | '/api/paypal/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/accessibility'
+    | '/admin'
     | '/book'
     | '/disclaimer'
     | '/login'
     | '/privacy'
     | '/register'
     | '/terms'
+    | '/api/courses'
+    | '/api/payment-settings'
+    | '/api/training-sessions'
+    | '/api/admin/bookings'
+    | '/api/admin/courses'
+    | '/api/admin/payment-settings'
+    | '/api/admin/sessions'
     | '/api/appointments/book'
     | '/api/appointments/slots'
     | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
     | '/api/auth/register'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/create-order'
+    | '/api/paypal/webhook'
   id:
     | '__root__'
     | '/'
     | '/accessibility'
+    | '/admin'
     | '/book'
     | '/disclaimer'
     | '/login'
     | '/privacy'
     | '/register'
     | '/terms'
+    | '/api/courses'
+    | '/api/payment-settings'
+    | '/api/training-sessions'
+    | '/api/admin/bookings'
+    | '/api/admin/courses'
+    | '/api/admin/payment-settings'
+    | '/api/admin/sessions'
     | '/api/appointments/book'
     | '/api/appointments/slots'
     | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/me'
     | '/api/auth/register'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/create-order'
+    | '/api/paypal/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessibilityRoute: typeof AccessibilityRoute
+  AdminRoute: typeof AdminRoute
   BookRoute: typeof BookRoute
   DisclaimerRoute: typeof DisclaimerRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
   TermsRoute: typeof TermsRoute
+  ApiCoursesRoute: typeof ApiCoursesRoute
+  ApiPaymentSettingsRoute: typeof ApiPaymentSettingsRoute
+  ApiTrainingSessionsRoute: typeof ApiTrainingSessionsRoute
+  ApiAdminBookingsRoute: typeof ApiAdminBookingsRoute
+  ApiAdminCoursesRoute: typeof ApiAdminCoursesRoute
+  ApiAdminPaymentSettingsRoute: typeof ApiAdminPaymentSettingsRoute
+  ApiAdminSessionsRoute: typeof ApiAdminSessionsRoute
   ApiAppointmentsBookRoute: typeof ApiAppointmentsBookRoute
   ApiAppointmentsSlotsRoute: typeof ApiAppointmentsSlotsRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
+  ApiPaypalCaptureOrderRoute: typeof ApiPaypalCaptureOrderRoute
+  ApiPaypalCreateOrderRoute: typeof ApiPaypalCreateOrderRoute
+  ApiPaypalWebhookRoute: typeof ApiPaypalWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/accessibility'
       fullPath: '/accessibility'
       preLoaderRoute: typeof AccessibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/book': {
@@ -244,6 +420,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/courses': {
+      id: '/api/courses'
+      path: '/api/courses'
+      fullPath: '/api/courses'
+      preLoaderRoute: typeof ApiCoursesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payment-settings': {
+      id: '/api/payment-settings'
+      path: '/api/payment-settings'
+      fullPath: '/api/payment-settings'
+      preLoaderRoute: typeof ApiPaymentSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/training-sessions': {
+      id: '/api/training-sessions'
+      path: '/api/training-sessions'
+      fullPath: '/api/training-sessions'
+      preLoaderRoute: typeof ApiTrainingSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/bookings': {
+      id: '/api/admin/bookings'
+      path: '/api/admin/bookings'
+      fullPath: '/api/admin/bookings'
+      preLoaderRoute: typeof ApiAdminBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/courses': {
+      id: '/api/admin/courses'
+      path: '/api/admin/courses'
+      fullPath: '/api/admin/courses'
+      preLoaderRoute: typeof ApiAdminCoursesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/payment-settings': {
+      id: '/api/admin/payment-settings'
+      path: '/api/admin/payment-settings'
+      fullPath: '/api/admin/payment-settings'
+      preLoaderRoute: typeof ApiAdminPaymentSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/sessions': {
+      id: '/api/admin/sessions'
+      path: '/api/admin/sessions'
+      fullPath: '/api/admin/sessions'
+      preLoaderRoute: typeof ApiAdminSessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/appointments/book': {
       id: '/api/appointments/book'
       path: '/api/appointments/book'
@@ -265,11 +490,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/me': {
+      id: '/api/auth/me'
+      path: '/api/auth/me'
+      fullPath: '/api/auth/me'
+      preLoaderRoute: typeof ApiAuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/register': {
       id: '/api/auth/register'
       path: '/api/auth/register'
       fullPath: '/api/auth/register'
       preLoaderRoute: typeof ApiAuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/capture-order': {
+      id: '/api/paypal/capture-order'
+      path: '/api/paypal/capture-order'
+      fullPath: '/api/paypal/capture-order'
+      preLoaderRoute: typeof ApiPaypalCaptureOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/create-order': {
+      id: '/api/paypal/create-order'
+      path: '/api/paypal/create-order'
+      fullPath: '/api/paypal/create-order'
+      preLoaderRoute: typeof ApiPaypalCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/webhook': {
+      id: '/api/paypal/webhook'
+      path: '/api/paypal/webhook'
+      fullPath: '/api/paypal/webhook'
+      preLoaderRoute: typeof ApiPaypalWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -278,16 +538,29 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessibilityRoute: AccessibilityRoute,
+  AdminRoute: AdminRoute,
   BookRoute: BookRoute,
   DisclaimerRoute: DisclaimerRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   RegisterRoute: RegisterRoute,
   TermsRoute: TermsRoute,
+  ApiCoursesRoute: ApiCoursesRoute,
+  ApiPaymentSettingsRoute: ApiPaymentSettingsRoute,
+  ApiTrainingSessionsRoute: ApiTrainingSessionsRoute,
+  ApiAdminBookingsRoute: ApiAdminBookingsRoute,
+  ApiAdminCoursesRoute: ApiAdminCoursesRoute,
+  ApiAdminPaymentSettingsRoute: ApiAdminPaymentSettingsRoute,
+  ApiAdminSessionsRoute: ApiAdminSessionsRoute,
   ApiAppointmentsBookRoute: ApiAppointmentsBookRoute,
   ApiAppointmentsSlotsRoute: ApiAppointmentsSlotsRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiAuthMeRoute: ApiAuthMeRoute,
   ApiAuthRegisterRoute: ApiAuthRegisterRoute,
+  ApiPaypalCaptureOrderRoute: ApiPaypalCaptureOrderRoute,
+  ApiPaypalCreateOrderRoute: ApiPaypalCreateOrderRoute,
+  ApiPaypalWebhookRoute: ApiPaypalWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

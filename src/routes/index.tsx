@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import heroImage from "@/assets/hero-training.jpg";
+import { useEffect, useState } from "react";
+
 import aboutImage from "@/assets/about-hands.jpg";
+import headerBanner from "../../header-banner.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,8 +35,8 @@ const coursePathways = [
       "AHA BLS completion card",
       "Best for new or renewing providers",
     ],
-    price: "From $100",
-    cta: "Book BLS",
+    priceLabel: "From $100",
+    ctaLabel: "Book BLS",
   },
   {
     title: "ACLS & PALS Certification",
@@ -44,8 +46,8 @@ const coursePathways = [
       "Initial and renewal pathways",
       "Scenario-based practice",
     ],
-    price: "From $199",
-    cta: "Ask about ACLS/PALS",
+    priceLabel: "From $199",
+    ctaLabel: "Ask about ACLS/PALS",
   },
   {
     title: "Heartsaver® CPR AED",
@@ -56,8 +58,8 @@ const coursePathways = [
       "CPR and AED response",
       "Two-year course completion card",
     ],
-    price: "Contact for dates",
-    cta: "Request Heartsaver CPR",
+    priceLabel: "Contact for dates",
+    ctaLabel: "Request Heartsaver CPR",
   },
   {
     title: "Pediatric First Aid CPR AED",
@@ -67,10 +69,23 @@ const coursePathways = [
       "First aid, CPR and AED",
       "Great for schools and childcare teams",
     ],
-    price: "From $90",
-    cta: "Book pediatric CPR",
+    priceLabel: "From $90",
+    ctaLabel: "Book pediatric CPR",
   },
 ];
+
+type CoursePathway = (typeof coursePathways)[number] & {
+  id?: string;
+  slug?: string;
+  sortOrder?: number;
+};
+
+type AuthUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: "USER" | "ADMIN";
+};
 
 const courseFinder = [
   {
@@ -114,6 +129,51 @@ const credentials = [
 ];
 
 function Index() {
+  const [publishedCourses, setPublishedCourses] = useState<CoursePathway[]>(coursePathways);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCourses() {
+      try {
+        const res = await fetch("/api/courses");
+        if (!res.ok) return;
+        const courses = (await res.json()) as CoursePathway[];
+        if (isMounted && courses.length > 0) {
+          setPublishedCourses(courses);
+        }
+      } catch {
+        // Keep the static content if the database-backed course catalog is unavailable.
+      }
+    }
+
+    async function loadCurrentUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) return;
+        const data = (await res.json()) as { user: AuthUser | null };
+        if (isMounted) {
+          setAuthUser(data.user);
+        }
+      } catch {
+        // Keep public navigation available if auth lookup fails.
+      }
+    }
+
+    void loadCourses();
+    void loadCurrentUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setAuthUser(null);
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -138,24 +198,63 @@ function Index() {
             <a className="transition-colors hover:text-foreground" href="#about">
               About
             </a>
-            <a className="transition-colors hover:text-foreground" href="#register">
-              Register
+            <a className="transition-colors hover:text-foreground" href="/book">
+              Book
             </a>
           </nav>
-          <a
-            href="/register"
-            className="inline-flex shrink-0 items-center rounded-md bg-highlight px-4 py-2 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
-          >
-            Register
-          </a>
+          <div className="flex shrink-0 items-center gap-2">
+            {authUser?.role === "ADMIN" ? (
+              <a
+                href="/admin"
+                className="hidden rounded-md border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface sm:inline-flex"
+              >
+                Admin
+              </a>
+            ) : null}
+            {authUser ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden rounded-md border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface sm:inline-flex"
+              >
+                Logout
+              </button>
+            ) : (
+              <a
+                href="/login"
+                className="hidden rounded-md border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface sm:inline-flex"
+              >
+                Login
+              </a>
+            )}
+            <a
+              href="/book"
+              className="inline-flex items-center rounded-md bg-highlight px-4 py-2 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
+            >
+              Book now
+            </a>
+          </div>
         </div>
       </header>
 
       <main id="top">
+        <section
+          className="border-b border-border bg-navy"
+          aria-label="Pulse and Purpose CPR banner"
+        >
+          <img
+            src={headerBanner}
+            alt="Pulse and Purpose CPR banner with heart, heartbeat line and clinical education tagline"
+            width={2172}
+            height={428}
+            className="block h-auto w-full"
+          />
+        </section>
+
         {/* Hero */}
         <section className="border-b border-border bg-navy text-navy-foreground">
-          <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-24">
-            <div>
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:py-24">
+            <div className="max-w-3xl">
               <p className="eyebrow text-pulse-light">Clinical education, delivered with purpose</p>
               <h1 className="mt-5 font-display text-4xl leading-[1.08] font-semibold sm:text-5xl lg:text-[3.4rem]">
                 Life-saving skills taught with clarity, rigor and confidence.
@@ -167,10 +266,10 @@ function Index() {
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
-                  href="/register"
+                  href="/book"
                   className="inline-flex items-center rounded-md bg-highlight px-6 py-3 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
                 >
-                  Register for a class
+                  Book a class
                 </a>
                 <a
                   href="#courses"
@@ -179,15 +278,6 @@ function Index() {
                   View course catalog
                 </a>
               </div>
-            </div>
-            <div className="overflow-hidden rounded-lg border border-navy-foreground/15">
-              <img
-                src={heroImage}
-                alt="Instructor guiding students practicing chest compressions on CPR training manikins"
-                width={1408}
-                height={1008}
-                className="h-full w-full object-cover"
-              />
             </div>
           </div>
           <div className="border-t border-navy-foreground/10">
@@ -233,14 +323,14 @@ function Index() {
           </div>
 
           <div className="mt-12 grid gap-5 sm:grid-cols-2">
-            {coursePathways.map((course) => (
+            {publishedCourses.map((course) => (
               <article key={course.title} className="rounded-lg border border-border bg-card p-7">
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="font-display text-xl font-semibold leading-snug">
                     {course.title}
                   </h3>
                   <span className="shrink-0 rounded-full bg-highlight/15 px-3 py-1 text-xs font-semibold text-highlight">
-                    {course.price}
+                    {course.priceLabel}
                   </span>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
@@ -258,7 +348,7 @@ function Index() {
                   href="/book"
                   className="mt-6 inline-flex text-sm font-semibold text-pulse transition-colors hover:text-highlight"
                 >
-                  {course.cta} →
+                  {course.ctaLabel} →
                 </a>
               </article>
             ))}
@@ -343,25 +433,25 @@ function Index() {
           </div>
         </section>
 
-        {/* Register CTA */}
-        <section id="register" className="bg-navy text-navy-foreground">
+        {/* Booking CTA */}
+        <section id="book" className="bg-navy text-navy-foreground">
           <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-16 lg:flex-row lg:items-center lg:justify-between lg:py-20">
             <div className="max-w-2xl">
-              <p className="eyebrow text-highlight-bright">Register today</p>
+              <p className="eyebrow text-highlight-bright">Book today</p>
               <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
                 Secure your seat in the next certification class
               </h2>
               <p className="mt-4 text-navy-foreground/75">
                 Individual seats, group sessions and on-site training. Tell us the course and dates
-                that work for you and we'll confirm your registration.
+                that work for you and we'll confirm your booking.
               </p>
             </div>
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col">
               <a
-                href="/register"
+                href="/book"
                 className="inline-flex items-center justify-center rounded-md bg-highlight px-7 py-3.5 text-sm font-semibold text-highlight-foreground transition-opacity hover:opacity-90"
               >
-                Create account
+                Request booking
               </a>
               <a
                 href="/book"

@@ -12,29 +12,108 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String?
-  role          UserRole  @default(USER)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  appointments  Appointment[]
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String?
+  role         UserRole      @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointments Appointment[]
+}
+
+model CourseOffering {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  title       String
+  audience    String
+  description String?
+  details     String[]
+  priceLabel  String
+  priceCents  Int?
+  ctaLabel    String
+  isPublished Boolean           @default(true)
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  sessions    TrainingSession[]
+
+  @@index([isPublished, sortOrder])
+}
+
+model PaymentSettings {
+  id                          String     @id @default("default")
+  paypalMode                  PayPalMode @default(DISABLED)
+  paypalClientId              String?
+  encryptedPaypalClientSecret String?
+  currency                    String     @default("USD")
+  createdAt                   DateTime   @default(now())
+  updatedAt                   DateTime   @updatedAt
+}
+
+model TrainingSession {
+  id           String                @id @default(cuid())
+  courseId     String
+  course       CourseOffering        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  startTime    DateTime
+  endTime      DateTime
+  capacity     Int                   @default(1)
+  location     String?
+  status       TrainingSessionStatus @default(DRAFT)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  appointments Appointment[]
+
+  @@index([status, startTime])
+  @@index([courseId, startTime])
 }
 
 model Appointment {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  startTime     DateTime
-  endTime       DateTime
-  status        AppointmentStatus @default(PENDING)
-  notes         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String            @id @default(cuid())
+  bookingCode     String            @unique
+  userId          String?
+  user            User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId       String?
+  session         TrainingSession?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  startTime       DateTime
+  endTime         DateTime
+  status          AppointmentStatus @default(PENDING)
+  paymentStatus   PaymentStatus     @default(UNPAID)
+  paymentProvider String?
+  paypalOrderId   String?           @unique
+  paypalCaptureId String?
+  amountCents     Int?
+  currency        String?
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
-  @@unique([startTime])
+  @@index([customerEmail])
+  @@index([sessionId, status])
   @@index([startTime, endTime])
+}
+
+enum TrainingSessionStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum PayPalMode {
+  DISABLED
+  SANDBOX
+  LIVE
+}
+
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
 
 enum AppointmentStatus {
