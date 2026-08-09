@@ -159,7 +159,10 @@ async function sendEmail(input: SendEmailInput) {
   });
 
   if (!response.ok) {
-    throw new Error(`Email provider rejected message with status ${response.status}`);
+    const errorText = await response.text().catch(() => "Unable to read provider response");
+    throw new Error(
+      `Email provider rejected message with status ${response.status}: ${errorText.slice(0, 500)}`,
+    );
   }
 
   return { sent: true, skipped: false };
