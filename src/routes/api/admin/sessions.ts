@@ -3,6 +3,7 @@ import { addMinutes, isValid, parseISO } from "date-fns";
 
 import { getSessionAvailability } from "@/lib/booking";
 import { requireAdmin } from "@/lib/auth";
+import { buildBookingEmailDetails, sendBookingUpdateEmail } from "@/lib/booking-emails";
 import { jsonResponse, readJsonBody } from "@/lib/http";
 import { getDb } from "@/lib/prisma";
 
@@ -140,7 +141,7 @@ export const Route = createFileRoute("/api/admin/sessions")({
             );
           }
 
-          const session = await db.$transaction(async (tx) => {
+          const { session, updatedBookings } = await db.$transaction(async (tx) => {
             const updatedSession = await tx.trainingSession.update({
               where: { id },
               data: payload,
@@ -149,8 +150,17 @@ export const Route = createFileRoute("/api/admin/sessions")({
               where: { sessionId: id, status: { in: ["PENDING", "CONFIRMED"] } },
               data: { startTime: payload.startTime, endTime: payload.endTime },
             });
-            return updatedSession;
+            const bookings = await tx.appointment.findMany({
+              where: { sessionId: id, status: { in: ["PENDING", "CONFIRMED"] } },
+              include: { session: { include: { course: true } } },
+            });
+            return { session: updatedSession, updatedBookings: bookings };
           });
+          await Promise.all(
+            updatedBookings.map((booking) =>
+              sendBookingUpdateEmail(buildBookingEmailDetails(booking)),
+            ),
+          );
           return jsonResponse(session);
         } catch (error) {
           console.error("Admin session update failed", error);

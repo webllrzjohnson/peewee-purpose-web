@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type { Prisma } from "@prisma/client";
 
 import { requireAdmin } from "@/lib/auth";
+import { buildBookingEmailDetails, resendBookingConfirmationEmail } from "@/lib/booking-emails";
 import { jsonResponse, readJsonBody } from "@/lib/http";
 import { getDb } from "@/lib/prisma";
 
@@ -177,6 +178,42 @@ export const Route = createFileRoute("/api/admin/bookings")({
         } catch (error) {
           console.error("Admin booking update failed", error);
           return jsonResponse({ message: "Unable to update booking" }, { status: 500 });
+        }
+      },
+      POST: async ({ request }) => {
+        const auth = await requireAdmin(request);
+        if (!auth.user) return jsonResponse({ message: auth.message }, { status: auth.status });
+
+        const body = await readJsonBody(request);
+        if (body == null || typeof body !== "object") {
+          return jsonResponse({ message: "Invalid request" }, { status: 400 });
+        }
+
+        const data = body as Record<string, unknown>;
+        const id = readString(data, "id");
+        const action = readString(data, "action");
+
+        if (!id || action !== "resendConfirmation") {
+          return jsonResponse(
+            { message: "Booking id and valid action are required" },
+            { status: 400 },
+          );
+        }
+
+        try {
+          const db = getDb();
+          const booking = await db.appointment.findUnique({
+            where: { id },
+            include: { session: { include: { course: true } } },
+          });
+
+          if (!booking) return jsonResponse({ message: "Booking not found" }, { status: 404 });
+
+          await resendBookingConfirmationEmail(buildBookingEmailDetails(booking));
+          return jsonResponse({ message: "Confirmation email resent" });
+        } catch (error) {
+          console.error("Admin booking email resend failed", error);
+          return jsonResponse({ message: "Unable to resend confirmation email" }, { status: 500 });
         }
       },
     },

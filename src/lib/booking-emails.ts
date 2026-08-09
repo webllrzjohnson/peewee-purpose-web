@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 
 const resendApiKey = process.env["RESEND_API_KEY"]?.trim();
@@ -5,7 +6,7 @@ const emailFrom = process.env["EMAIL_FROM"]?.trim();
 const adminEmail =
   process.env["BOOKING_ADMIN_EMAIL"]?.trim() || process.env["NOTIFICATION_EMAIL_TO"]?.trim();
 
-type BookingEmailDetails = {
+export type BookingEmailDetails = {
   bookingCode: string;
   customerName: string;
   customerEmail: string;
@@ -18,6 +19,10 @@ type BookingEmailDetails = {
   paymentMethod: "PAYPAL" | "ONSITE" | "MANUAL";
   notes: string | null;
 };
+
+type BookingWithSession = Prisma.AppointmentGetPayload<{
+  include: { session: { include: { course: true } } };
+}>;
 
 type SendEmailInput = {
   to: string;
@@ -55,6 +60,26 @@ function buildCustomerSubject(details: BookingEmailDetails, paid: boolean) {
   return paid
     ? `Payment received: ${details.courseTitle} (${details.bookingCode})`
     : `Booking request received: ${details.courseTitle} (${details.bookingCode})`;
+}
+
+function isPaidBooking(details: BookingEmailDetails) {
+  return details.paymentMethod === "PAYPAL" && details.amountCents != null;
+}
+
+export function buildBookingEmailDetails(booking: BookingWithSession): BookingEmailDetails {
+  return {
+    bookingCode: booking.bookingCode,
+    customerName: booking.customerName,
+    customerEmail: booking.customerEmail,
+    customerPhone: booking.customerPhone,
+    courseTitle: booking.session?.course.title ?? "Training session",
+    startTime: booking.startTime,
+    endTime: booking.endTime,
+    amountCents: booking.amountCents,
+    currency: booking.currency,
+    paymentMethod: booking.paymentProvider === "PAYPAL" ? "PAYPAL" : "ONSITE",
+    notes: booking.notes,
+  };
 }
 
 function buildCustomerText(details: BookingEmailDetails, paid: boolean) {
@@ -212,6 +237,51 @@ export async function sendPaidBookingEmails(details: BookingEmailDetails) {
         })
       : Promise.resolve(),
   ]);
+}
+
+export async function resendBookingConfirmationEmail(details: BookingEmailDetails) {
+  const paid = isPaidBooking(details);
+  await sendEmail({
+    to: details.customerEmail,
+    subject: `Resent confirmation: ${details.courseTitle} (${details.bookingCode})`,
+    text: buildCustomerText(details, paid),
+    html: buildCustomerHtml(details, paid),
+  });
+}
+
+export async function sendBookingUpdateEmail(details: BookingEmailDetails) {
+  await sendSafely({
+    to: details.customerEmail,
+    subject: `Booking update: ${details.courseTitle} (${details.bookingCode})`,
+    text: [
+      `Hi ${details.customerName},`,
+      "",
+      "Your training booking details have been updated.",
+      "",
+      `Booking reference: ${details.bookingCode}`,
+      `Class: ${details.courseTitle}`,
+      `Schedule: ${formatSessionRange(details)}`,
+      `Amount: ${formatAmount(details.amountCents, details.currency)}`,
+      "",
+      "Please keep this email for your records.",
+      "",
+      "Purposeful CPR",
+    ].join("\n"),
+    html: `
+      <div style="font-family: Arial, sans-serif; color: #0f172a; line-height: 1.5;">
+        <p>Hi ${escapeHtml(details.customerName)},</p>
+        <p>Your training booking details have been updated.</p>
+        <table style="border-collapse: collapse; margin: 16px 0;">
+          <tr><td style="padding: 4px 12px 4px 0; color: #475569;">Booking reference</td><td><strong>${escapeHtml(details.bookingCode)}</strong></td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #475569;">Class</td><td>${escapeHtml(details.courseTitle)}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #475569;">Schedule</td><td>${escapeHtml(formatSessionRange(details))}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #475569;">Amount</td><td>${escapeHtml(formatAmount(details.amountCents, details.currency))}</td></tr>
+        </table>
+        <p>Please keep this email for your records.</p>
+        <p>Purposeful CPR</p>
+      </div>
+    `,
+  });
 }
 
 export function buildBookingEmailPreview(details: BookingEmailDetails) {

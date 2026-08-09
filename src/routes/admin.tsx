@@ -358,6 +358,26 @@ function AdminPage() {
     await loadBookings();
   }
 
+  async function resendBookingEmail(booking: Booking) {
+    const res = await fetch("/api/admin/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: booking.id, action: "resendConfirmation" }),
+    });
+
+    if (!res.ok) {
+      const error = (await res.json().catch(() => null)) as { message?: string } | null;
+      toast({
+        variant: "destructive",
+        title: "Email resend failed",
+        description: error?.message ?? "Check email configuration and try again.",
+      });
+      return;
+    }
+
+    toast({ title: "Confirmation email resent" });
+  }
+
   async function changeBookingView(view: BookingView) {
     setBookingView(view);
     setBookingPage(1);
@@ -380,6 +400,28 @@ function AdminPage() {
     return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
       amountCents / 100,
     );
+  }
+
+  function badgeTone(kind: "booking" | "payment" | "provider", value: string | null) {
+    const tones: Record<string, string> = {
+      PENDING: "border-amber-200 bg-amber-50 text-amber-800",
+      CONFIRMED: "border-emerald-200 bg-emerald-50 text-emerald-800",
+      COMPLETED: "border-sky-200 bg-sky-50 text-sky-800",
+      CANCELLED: "border-slate-200 bg-slate-100 text-slate-700",
+      UNPAID: "border-slate-200 bg-slate-50 text-slate-700",
+      PAID: "border-emerald-200 bg-emerald-50 text-emerald-800",
+      FAILED: "border-red-200 bg-red-50 text-red-800",
+      REFUNDED: "border-purple-200 bg-purple-50 text-purple-800",
+      PAYPAL: "border-blue-200 bg-blue-50 text-blue-800",
+      ONSITE: "border-orange-200 bg-orange-50 text-orange-800",
+      MANUAL: "border-slate-200 bg-slate-50 text-slate-700",
+    };
+    const base = "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold";
+    return `${base} ${tones[value ?? ""] ?? tones[kind === "provider" ? "MANUAL" : "UNPAID"]}`;
+  }
+
+  function prettyStatus(value: string | null) {
+    return value ? value.replace(/_/g, " ").toLowerCase() : "manual";
   }
 
   function amountToCents(value: string) {
@@ -1070,11 +1112,19 @@ function AdminPage() {
                           {format(new Date(booking.startTime), "PPP p")} • {booking.customerEmail} •{" "}
                           {booking.customerPhone}
                         </p>
-                        <p className="mt-1 text-sm">Status: {booking.status}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Payment: {booking.paymentStatus} •{" "}
-                          {formatMoney(booking.amountCents, booking.currency)}
-                          {booking.paymentProvider ? ` • ${booking.paymentProvider}` : ""}
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className={badgeTone("booking", booking.status)}>
+                            Booking: {prettyStatus(booking.status)}
+                          </span>
+                          <span className={badgeTone("payment", booking.paymentStatus)}>
+                            Payment: {prettyStatus(booking.paymentStatus)}
+                          </span>
+                          <span className={badgeTone("provider", booking.paymentProvider)}>
+                            {prettyStatus(booking.paymentProvider)}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Amount: {formatMoney(booking.amountCents, booking.currency)}
                         </p>
                         {booking.paypalOrderId ? (
                           <p className="mt-1 break-all text-xs text-muted-foreground">
@@ -1091,36 +1141,47 @@ function AdminPage() {
                           </p>
                         ) : null}
                       </div>
-                      {bookingView === "history" ? null : (
-                        <div className="flex flex-wrap gap-2">
-                          {booking.status !== "CONFIRMED" ? (
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
+                          onClick={() => void resendBookingEmail(booking)}
+                        >
+                          Resend email
+                        </Button>
+                        {bookingView === "history" ? null : (
+                          <>
+                            {booking.status !== "CONFIRMED" ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
+                                onClick={() => updateBooking(booking, "CONFIRMED")}
+                              >
+                                Confirm
+                              </Button>
+                            ) : null}
                             <Button
                               type="button"
                               size="sm"
-                              className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
-                              onClick={() => updateBooking(booking, "CONFIRMED")}
+                              className="border-sky-200 bg-sky-50 text-sky-800 hover:bg-sky-100"
+                              onClick={() => updateBooking(booking, "COMPLETED")}
                             >
-                              Confirm
+                              Complete
                             </Button>
-                          ) : null}
-                          <Button
-                            type="button"
-                            size="sm"
-                            className="border-sky-200 bg-sky-50 text-sky-800 hover:bg-sky-100"
-                            onClick={() => updateBooking(booking, "COMPLETED")}
-                          >
-                            Complete
-                          </Button>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => updateBooking(booking, "CANCELLED")}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => updateBooking(booking, "CANCELLED")}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))
                 ) : (
