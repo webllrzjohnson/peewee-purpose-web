@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "start": "node .output/server/index.mjs",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "bun prisma/seed.ts",
     "preview": "vite preview",
