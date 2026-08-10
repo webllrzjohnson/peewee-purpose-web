@@ -10,6 +10,9 @@ export default defineConfig({
   nitro: {
     // Coolify deploys this app on a VPS Node runtime, not Cloudflare Workers.
     preset: "node-server",
+    // Prisma's generated client lives in a hidden .prisma package that can be missed by
+    // trace-based standalone builds unless explicitly included.
+    traceDeps: [".prisma*", "@prisma/client*"],
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
